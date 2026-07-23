@@ -1,0 +1,9 @@
+services:
+  ittech:
+    build: .
+    container_name: ittech-site
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
