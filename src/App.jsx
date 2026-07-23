@@ -1,179 +1,244 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const services = [
   {
-    number: '01',
-    title: 'Автоматизация и AI',
-    text: 'Убираем ручную рутину, создаём AI-ассистентов, Telegram-ботов и умные бизнес-процессы.',
-    tags: ['AI', 'Боты', 'Автоматизация'],
-    icon: 'spark',
+    id: 'automation',
+    eyebrow: 'AI / Automation',
+    title: 'Автоматизация бизнеса',
+    text: 'Telegram-боты, AI-ассистенты, обработка заявок, отчёты и процессы без ручной рутины.',
+    tags: ['AI', 'Telegram', 'Workflow'],
+    icon: 'automation',
+    className: 'service-large service-violet',
   },
   {
-    number: '02',
-    title: 'Сайты и веб-системы',
-    text: 'Лендинги, интернет-магазины, личные кабинеты, CRM и сложные платформы под ваши задачи.',
-    tags: ['Web', 'E-commerce', 'CRM'],
-    icon: 'code',
+    id: 'web',
+    eyebrow: 'Web systems',
+    title: 'Сайты и платформы',
+    text: 'От продающего сайта до CRM, личного кабинета и сложной веб-системы.',
+    tags: ['Web', 'CRM', 'E-commerce'],
+    icon: 'web',
+    className: 'service-cyan',
   },
   {
-    number: '03',
+    id: 'mobile',
+    eyebrow: 'Mobile products',
     title: 'Мобильные приложения',
-    text: 'Проектируем и запускаем приложения для iOS и Android — от идеи и дизайна до публикации.',
-    tags: ['iOS', 'Android', 'Cross-platform'],
-    icon: 'phone',
+    text: 'Проектирование, разработка и публикация приложений для iOS и Android.',
+    tags: ['iOS', 'Android', 'Flutter'],
+    icon: 'mobile',
+    className: 'service-lime',
   },
   {
-    number: '04',
-    title: 'Игры и XR',
-    text: 'Разрабатываем мобильные, компьютерные и VR/AR-проекты с продуманной механикой и визуалом.',
-    tags: ['Games', 'VR / AR', 'Unity'],
-    icon: 'game',
-  },
-  {
-    number: '05',
-    title: 'Интеграции',
-    text: 'Связываем сервисы, платёжные системы, API, телефонию, аналитику и внутренние инструменты.',
+    id: 'integration',
+    eyebrow: 'Connected systems',
+    title: 'Интеграции и API',
+    text: 'Объединяем сервисы, платежи, телефонию, аналитику и внутренние инструменты.',
     tags: ['API', 'Payments', 'Analytics'],
-    icon: 'nodes',
+    icon: 'integration',
+    className: 'service-blue',
   },
   {
-    number: '06',
-    title: 'Cloud и инфраструктура',
-    text: 'Настраиваем серверы, Docker, CI/CD, мониторинг, резервное копирование и защиту систем.',
+    id: 'games',
+    eyebrow: 'Games / XR',
+    title: 'Игры, VR и AR',
+    text: 'Создаём интерактивные продукты, игровые механики и иммерсивные решения.',
+    tags: ['Unity', 'VR / AR', 'Games'],
+    icon: 'games',
+    className: 'service-orange',
+  },
+  {
+    id: 'infra',
+    eyebrow: 'Cloud / DevOps',
+    title: 'Инфраструктура',
+    text: 'Серверы, Docker, CI/CD, мониторинг, резервные копии и техническая безопасность.',
     tags: ['Cloud', 'DevOps', 'Security'],
-    icon: 'cloud',
+    icon: 'infra',
+    className: 'service-slate',
   },
 ]
 
-const projects = [
+const routes = [
   {
-    type: 'Бизнес-система',
-    title: 'Единая цифровая среда компании',
-    text: 'Сайт, CRM, аналитика, автоматические уведомления и интеграции — в одной связанной системе.',
-    accent: 'violet',
-    visual: 'dashboard',
+    number: '01',
+    title: 'Нужно запустить продукт',
+    text: 'Сайт, приложение, сервис или игра — от идеи и прототипа до публикации.',
+    service: 'Разработка нового цифрового продукта',
   },
   {
-    type: 'Автоматизация',
-    title: 'Процессы работают без рутины',
-    text: 'Заявки распределяются, данные синхронизируются, отчёты формируются автоматически.',
-    accent: 'cyan',
-    visual: 'flow',
+    number: '02',
+    title: 'Нужно автоматизировать работу',
+    text: 'Убираем повторяющиеся действия, связываем системы и ускоряем команду.',
+    service: 'Автоматизация бизнес-процессов',
   },
   {
-    type: 'Цифровой продукт',
-    title: 'От идеи до готового приложения',
-    text: 'Исследование, дизайн, разработка, тестирование, запуск и дальнейшее развитие продукта.',
-    accent: 'lime',
-    visual: 'mobile',
+    number: '03',
+    title: 'Нужно улучшить готовую систему',
+    text: 'Разбираемся в текущем продукте, исправляем слабые места и масштабируем.',
+    service: 'Аудит и развитие готовой системы',
   },
 ]
 
 const process = [
-  ['01', 'Разбираемся', 'Изучаем задачу, процессы и цели. Определяем, что действительно даст результат.'],
-  ['02', 'Проектируем', 'Собираем структуру, прототип и технический план с понятными этапами.'],
-  ['03', 'Разрабатываем', 'Создаём решение короткими итерациями и регулярно показываем прогресс.'],
-  ['04', 'Запускаем', 'Тестируем, разворачиваем, обучаем команду и помогаем развивать продукт.'],
+  ['01', 'Диагностика', 'Разбираем задачу и определяем, какое решение даст реальный эффект.'],
+  ['02', 'Архитектура', 'Фиксируем структуру, пользовательские сценарии, этапы и риски.'],
+  ['03', 'Разработка', 'Работаем короткими итерациями и показываем результат по ходу проекта.'],
+  ['04', 'Запуск', 'Тестируем, разворачиваем, подключаем аналитику и остаёмся на поддержке.'],
 ]
 
-const rotatingWords = ['сайты', 'приложения', 'игры', 'автоматизацию', 'интеграции']
-
-function Icon({ name, size = 24 }) {
+function UIIcon({ name, size = 20 }) {
   const common = {
     width: size,
     height: size,
     viewBox: '0 0 24 24',
     fill: 'none',
     stroke: 'currentColor',
-    strokeWidth: 1.7,
+    strokeWidth: 1.8,
     strokeLinecap: 'round',
     strokeLinejoin: 'round',
     'aria-hidden': true,
   }
 
-  const paths = {
-    arrow: <><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></>,
-    spark: <><path d="m12 3-1.5 5.5L5 10l5.5 1.5L12 17l1.5-5.5L19 10l-5.5-1.5L12 3Z"/><path d="m5 16-.7 2.3L2 19l2.3.7L5 22l.7-2.3L8 19l-2.3-.7L5 16Z"/></>,
-    code: <><path d="m8 9-3 3 3 3"/><path d="m16 9 3 3-3 3"/><path d="m14 5-4 14"/></>,
-    phone: <><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></>,
-    game: <><path d="M8.5 6h7a5 5 0 0 1 4.8 6.4l-1.1 3.8a2.2 2.2 0 0 1-3.7 1l-1.2-1.2H9.7l-1.2 1.2a2.2 2.2 0 0 1-3.7-1l-1.1-3.8A5 5 0 0 1 8.5 6Z"/><path d="M8 10v4M6 12h4"/><path d="M16.5 11.5h.01M18 13h.01"/></>,
-    nodes: <><circle cx="5" cy="12" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="19" cy="19" r="2"/><path d="m7 11 10-5M7 13l10 5"/></>,
-    cloud: <><path d="M17.5 19H6a4 4 0 0 1-.4-8A6.5 6.5 0 0 1 18 9.5a4.8 4.8 0 0 1-.5 9.5Z"/><path d="m9 14 3-3 3 3M12 11v6"/></>,
+  const icons = {
+    arrow: <><path d="M5 12h13"/><path d="m13 6 6 6-6 6"/></>,
     check: <path d="m5 12 4 4L19 6"/>,
     menu: <><path d="M4 7h16M4 12h16M4 17h16"/></>,
     close: <><path d="m6 6 12 12M18 6 6 18"/></>,
-    copy: <><rect x="8" y="8" width="11" height="11" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></>,
+    send: <><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></>,
+    telegram: <path d="M21.4 4.6 18.5 19c-.2 1-.8 1.2-1.6.7l-4.4-3.2-2.1 2c-.2.2-.4.4-.9.4l.3-4.5 8.2-7.4c.4-.3-.1-.5-.5-.2L7.4 13.2 3 11.8c-1-.3-1-1 .2-1.5L20.4 3.7c.8-.3 1.5.2 1 1Z"/>,
+    mouse: <><rect x="7" y="2" width="10" height="20" rx="5"/><path d="M12 6v3"/></>,
   }
 
-  return <svg {...common}>{paths[name]}</svg>
+  return <svg {...common}>{icons[name]}</svg>
+}
+
+function ServiceGlyph({ type }) {
+  const common = { viewBox: '0 0 96 96', fill: 'none', 'aria-hidden': true }
+
+  if (type === 'automation') {
+    return (
+      <svg {...common}>
+        <defs><linearGradient id="auto-a" x1="18" y1="16" x2="78" y2="82" gradientUnits="userSpaceOnUse"><stop stopColor="currentColor" stopOpacity=".95"/><stop offset="1" stopColor="currentColor" stopOpacity=".18"/></linearGradient></defs>
+        <rect x="14" y="18" width="27" height="21" rx="7" stroke="currentColor" strokeWidth="2"/>
+        <rect x="55" y="57" width="27" height="21" rx="7" stroke="currentColor" strokeWidth="2"/>
+        <circle cx="68.5" cy="28.5" r="11.5" stroke="currentColor" strokeWidth="2"/>
+        <path d="M41 28.5h16M68.5 40v17M28 39v22c0 4.4 3.6 8 8 8h19" stroke="url(#auto-a)" strokeWidth="2.5" strokeLinecap="round"/>
+        <path d="m62.5 28.5 4 4 8-9" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/>
+        <circle cx="28" cy="28.5" r="3.5" fill="currentColor"/>
+        <circle cx="68.5" cy="67.5" r="3.5" fill="currentColor"/>
+      </svg>
+    )
+  }
+
+  if (type === 'web') {
+    return (
+      <svg {...common}>
+        <rect x="13" y="17" width="70" height="58" rx="10" stroke="currentColor" strokeWidth="2"/>
+        <path d="M13 31h70" stroke="currentColor" strokeOpacity=".45" strokeWidth="2"/>
+        <circle cx="23" cy="24" r="2" fill="currentColor"/><circle cx="30" cy="24" r="2" fill="currentColor" fillOpacity=".55"/><circle cx="37" cy="24" r="2" fill="currentColor" fillOpacity=".3"/>
+        <rect x="22" y="40" width="24" height="25" rx="6" fill="currentColor" fillOpacity=".12" stroke="currentColor" strokeOpacity=".65"/>
+        <path d="M54 43h18M54 51h15M54 59h11" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"/>
+      </svg>
+    )
+  }
+
+  if (type === 'mobile') {
+    return (
+      <svg {...common}>
+        <rect x="28" y="10" width="40" height="76" rx="13" stroke="currentColor" strokeWidth="2.2"/>
+        <rect x="34" y="18" width="28" height="49" rx="8" fill="currentColor" fillOpacity=".1" stroke="currentColor" strokeOpacity=".6"/>
+        <path d="M39 30h18M39 38h13" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"/>
+        <rect x="39" y="48" width="18" height="11" rx="4" fill="currentColor" fillOpacity=".25"/>
+        <path d="M44 76h8" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"/>
+        <circle cx="68" cy="29" r="8" fill="currentColor"/><path d="m65 29 2 2 4-5" stroke="#071016" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    )
+  }
+
+  if (type === 'integration') {
+    return (
+      <svg {...common}>
+        <circle cx="48" cy="48" r="12" fill="currentColor" fillOpacity=".16" stroke="currentColor" strokeWidth="2"/>
+        <rect x="12" y="18" width="22" height="18" rx="6" stroke="currentColor" strokeWidth="2"/><rect x="62" y="18" width="22" height="18" rx="6" stroke="currentColor" strokeWidth="2"/>
+        <rect x="12" y="60" width="22" height="18" rx="6" stroke="currentColor" strokeWidth="2"/><rect x="62" y="60" width="22" height="18" rx="6" stroke="currentColor" strokeWidth="2"/>
+        <path d="m34 31 7 10m21-10-7 10M34 65l7-10m21 10-7-10" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"/><path d="M43 48h10" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"/>
+      </svg>
+    )
+  }
+
+  if (type === 'games') {
+    return (
+      <svg {...common}>
+        <path d="M31 30h34c8 0 14.6 5.7 16 13.4l4 22c1.3 7.3-7.5 11.9-12.7 6.6L62 61H34L23.7 72c-5.2 5.3-14 0.7-12.7-6.6l4-22C16.4 35.7 23 30 31 30Z" stroke="currentColor" strokeWidth="2.2"/>
+        <path d="M30 42v13M23.5 48.5h13M64 44h.1M72 52h.1" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round"/><path d="M38 30V20h20v10" stroke="currentColor" strokeOpacity=".55" strokeWidth="2" strokeLinecap="round"/>
+      </svg>
+    )
+  }
+
+  return (
+    <svg {...common}>
+      <path d="M25 68h46c9 0 15-6.4 15-14.4 0-7.6-5.5-13.7-13-14.4C70.8 28.8 61.7 21 50.8 21 38.5 21 28.5 30.8 28 43.1 18.1 43.2 10 50.7 10 60c0 4.4 1.8 8.4 4.7 11.2" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"/>
+      <rect x="28" y="52" width="40" height="28" rx="8" fill="currentColor" fillOpacity=".11" stroke="currentColor" strokeWidth="2"/>
+      <path d="M36 61h24M36 69h15" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"/><circle cx="61" cy="69" r="3" fill="currentColor"/>
+    </svg>
+  )
 }
 
 function Logo() {
-  return (
-    <a className="logo" href="#top" aria-label="IT Tech — на главную">
-      <span className="logo-mark"><span>IT</span></span>
-      <span className="logo-name">IT<span>TECH</span></span>
-    </a>
-  )
+  return <a className="logo" href="#top" aria-label="IT Tech — главная"><span className="logo-symbol"><i/><i/><i/></span><span className="logo-text">IT TECH</span></a>
 }
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [wordIndex, setWordIndex] = useState(0)
-  const [formState, setFormState] = useState({ name: '', contact: '', task: '' })
-  const [formMessage, setFormMessage] = useState('')
+  const [formState, setFormState] = useState({ name: '', contact: '', task: '', service: '', website: '' })
+  const [submitState, setSubmitState] = useState({ status: 'idle', message: '' })
   const heroRef = useRef(null)
 
   useEffect(() => {
-    const timer = window.setInterval(() => {
-      setWordIndex((current) => (current + 1) % rotatingWords.length)
-    }, 2200)
-    return () => window.clearInterval(timer)
-  }, [])
-
-  useEffect(() => {
-    const elements = document.querySelectorAll('[data-reveal]')
-    const observer = new IntersectionObserver(
-      (entries) => entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible')
-          observer.unobserve(entry.target)
-        }
-      }),
-      { threshold: 0.12 },
-    )
-    elements.forEach((element) => observer.observe(element))
+    const nodes = document.querySelectorAll('[data-reveal]')
+    const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-visible')
+        observer.unobserve(entry.target)
+      }
+    }), { threshold: 0.1, rootMargin: '0px 0px -30px' })
+    nodes.forEach((node) => observer.observe(node))
     return () => observer.disconnect()
   }, [])
 
   useEffect(() => {
     const hero = heroRef.current
     if (!hero) return undefined
-    const handlePointer = (event) => {
+    const onMove = (event) => {
       const rect = hero.getBoundingClientRect()
-      hero.style.setProperty('--mouse-x', `${event.clientX - rect.left}px`)
-      hero.style.setProperty('--mouse-y', `${event.clientY - rect.top}px`)
+      hero.style.setProperty('--pointer-x', `${((event.clientX - rect.left) / rect.width) * 100}%`)
+      hero.style.setProperty('--pointer-y', `${((event.clientY - rect.top) / rect.height) * 100}%`)
     }
-    hero.addEventListener('pointermove', handlePointer)
-    return () => hero.removeEventListener('pointermove', handlePointer)
+    hero.addEventListener('pointermove', onMove)
+    return () => hero.removeEventListener('pointermove', onMove)
   }, [])
 
-  const brief = useMemo(() => {
-    return `Новая заявка для IT Tech\nИмя: ${formState.name || 'не указано'}\nКонтакт: ${formState.contact || 'не указан'}\nЗадача: ${formState.task || 'не описана'}`
-  }, [formState])
+  const chooseService = (service) => {
+    setFormState((current) => ({ ...current, service, task: current.task || `Хочу обсудить: ${service}.` }))
+    document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    if (!formState.contact.trim() || !formState.task.trim()) {
-      setFormMessage('Укажите контакт и коротко опишите задачу.')
-      return
-    }
+    if (submitState.status === 'loading') return
+    setSubmitState({ status: 'loading', message: 'Отправляем заявку в Telegram…' })
 
     try {
-      await navigator.clipboard.writeText(brief)
-      setFormMessage('Заявка скопирована. Отправьте её в удобный мессенджер IT Tech.')
-    } catch {
-      setFormMessage('Заявка сформирована. Подключите Telegram или CRM для автоматической отправки.')
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formState),
+      })
+      const result = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(result.message || 'Не удалось отправить заявку. Попробуйте ещё раз.')
+      setSubmitState({ status: 'success', message: 'Готово. Заявка отправлена в Telegram — мы свяжемся с вами.' })
+      setFormState({ name: '', contact: '', task: '', service: '', website: '' })
+    } catch (error) {
+      setSubmitState({ status: 'error', message: error.message })
     }
   }
 
@@ -181,258 +246,99 @@ function App() {
     <div className="site-shell" id="top">
       <header className="header">
         <div className="container header-inner">
-          <Logo />
-          <nav className={`nav ${menuOpen ? 'is-open' : ''}`} aria-label="Основная навигация">
-            <a href="#services" onClick={() => setMenuOpen(false)}>Услуги</a>
-            <a href="#solutions" onClick={() => setMenuOpen(false)}>Решения</a>
-            <a href="#process" onClick={() => setMenuOpen(false)}>Как работаем</a>
-            <a href="#contact" onClick={() => setMenuOpen(false)}>Контакты</a>
+          <Logo/>
+          <nav className={`nav ${menuOpen ? 'is-open' : ''}`} aria-label="Навигация по сайту">
+            <a href="#services" onClick={() => setMenuOpen(false)}>Услуги</a><a href="#routes" onClick={() => setMenuOpen(false)}>С чего начать</a><a href="#process" onClick={() => setMenuOpen(false)}>Процесс</a><a href="#contact" onClick={() => setMenuOpen(false)}>Контакты</a>
           </nav>
-          <a className="header-cta" href="#contact">Обсудить проект <Icon name="arrow" size={17} /></a>
-          <button className="menu-button" type="button" onClick={() => setMenuOpen(!menuOpen)} aria-label="Открыть меню" aria-expanded={menuOpen}>
-            <Icon name={menuOpen ? 'close' : 'menu'} />
-          </button>
+          <a className="header-cta" href="#contact">Обсудить проект <UIIcon name="arrow" size={17}/></a>
+          <button className="menu-button" type="button" onClick={() => setMenuOpen((value) => !value)} aria-label="Открыть меню" aria-expanded={menuOpen}><UIIcon name={menuOpen ? 'close' : 'menu'}/></button>
         </div>
       </header>
 
       <main>
         <section className="hero" ref={heroRef}>
-          <div className="grid-plane" aria-hidden="true" />
-          <div className="hero-glow" aria-hidden="true" />
-          <div className="orb orb-one" aria-hidden="true" />
-          <div className="orb orb-two" aria-hidden="true" />
-
-          <div className="container hero-inner">
+          <div className="hero-mesh" aria-hidden="true"/><div className="hero-scan" aria-hidden="true"/>
+          <div className="container hero-layout">
             <div className="hero-copy" data-reveal>
-              <div className="eyebrow"><span className="status-dot" /> IT-команда полного цикла</div>
-              <h1>
-                Создаём технологии,<br />
-                которые <span className="gradient-text">двигают бизнес</span>
-              </h1>
-              <p className="hero-lead">
-                Разрабатываем <span className="rotating-word" key={rotatingWords[wordIndex]}>{rotatingWords[wordIndex]}</span>, объединяем сервисы и превращаем сложные процессы в простые цифровые решения.
-              </p>
-              <div className="hero-actions">
-                <a className="button button-primary" href="#contact">Запустить проект <Icon name="arrow" size={19} /></a>
-                <a className="button button-ghost" href="#services">Посмотреть услуги</a>
-              </div>
-              <div className="hero-points">
-                <span><Icon name="check" size={16} /> Под ключ</span>
-                <span><Icon name="check" size={16} /> Прозрачные этапы</span>
-                <span><Icon name="check" size={16} /> Поддержка после запуска</span>
-              </div>
+              <div className="eyebrow"><span className="live-dot"/> Цифровая разработка полного цикла</div>
+              <h1>Создаём системы,<br/><span>которыми удобно пользоваться.</span></h1>
+              <p>Сайты, приложения, автоматизация, Telegram-боты, игры и инфраструктура — одна команда отвечает за весь результат.</p>
+              <div className="hero-actions"><a className="button button-primary" href="#contact">Обсудить задачу <UIIcon name="arrow" size={18}/></a><a className="button button-secondary" href="#services">Посмотреть направления</a></div>
+              <div className="hero-trust"><span><UIIcon name="check" size={15}/> Понятный план</span><span><UIIcon name="check" size={15}/> Регулярный прогресс</span><span><UIIcon name="check" size={15}/> Поддержка после запуска</span></div>
             </div>
 
-            <div className="hero-visual" data-reveal>
-              <div className="tech-orbit orbit-outer">
-                <span className="orbit-node node-ai">AI</span>
-                <span className="orbit-node node-web">WEB</span>
-                <span className="orbit-node node-app">APP</span>
-                <span className="orbit-node node-game">GAME</span>
-              </div>
-              <div className="tech-orbit orbit-inner" />
-              <div className="core-card">
-                <div className="core-logo"><span>IT</span></div>
-                <strong>IT TECH</strong>
-                <small>BUILD · CONNECT · SCALE</small>
-              </div>
-              <div className="floating-card card-code">
-                <span className="card-dot green" />
-                <code>system.ready()</code>
-              </div>
-              <div className="floating-card card-progress">
-                <div className="mini-label">PROJECT STATUS</div>
-                <div className="progress-row"><span>Development</span><b>82%</b></div>
-                <div className="progress-track"><span /></div>
-              </div>
-              <div className="data-stream stream-one" />
-              <div className="data-stream stream-two" />
+            <div className="system-stage" data-reveal aria-label="Визуализация цифровой системы">
+              <div className="stage-grid"/>
+              <div className="system-core"><div className="core-rings"><i/><i/><i/></div><span className="core-label">IT TECH</span><strong>Digital<br/>system</strong><small>DESIGN · BUILD · CONNECT</small></div>
+              <div className="system-node node-web"><span className="node-icon"><ServiceGlyph type="web"/></span><div><small>WEB</small><strong>Platform</strong></div></div>
+              <div className="system-node node-mobile"><span className="node-icon"><ServiceGlyph type="mobile"/></span><div><small>MOBILE</small><strong>Application</strong></div></div>
+              <div className="system-node node-ai"><span className="node-icon"><ServiceGlyph type="automation"/></span><div><small>AUTOMATION</small><strong>AI workflow</strong></div></div>
+              <div className="system-node node-cloud"><span className="node-icon"><ServiceGlyph type="infra"/></span><div><small>CLOUD</small><strong>Infrastructure</strong></div></div>
+              <svg className="system-links" viewBox="0 0 600 600" aria-hidden="true"><path d="M300 300C205 260 185 200 146 145"/><path d="M300 300C404 253 430 202 475 156"/><path d="M300 300C206 350 184 411 143 457"/><path d="M300 300C402 350 427 413 474 456"/><circle cx="300" cy="300" r="5"/><circle className="link-pulse pulse-a" cx="146" cy="145" r="5"/><circle className="link-pulse pulse-b" cx="475" cy="156" r="5"/><circle className="link-pulse pulse-c" cx="143" cy="457" r="5"/><circle className="link-pulse pulse-d" cx="474" cy="456" r="5"/></svg>
+              <div className="status-panel"><div><span className="live-dot"/><small>System online</small></div><div className="status-bars"><i/><i/><i/><i/><i/></div></div>
             </div>
           </div>
-
-          <div className="container hero-strip" data-reveal>
-            <div><strong>От идеи</strong><span>Понимаем задачу</span></div>
-            <div><strong>До запуска</strong><span>Создаём продукт</span></div>
-            <div><strong>И развития</strong><span>Улучшаем систему</span></div>
-            <div className="strip-action"><span>Ваш проект может быть следующим</span><a href="#contact"><Icon name="arrow" size={18} /></a></div>
-          </div>
+          <a className="scroll-hint" href="#services"><UIIcon name="mouse" size={18}/> Листайте вниз</a>
         </section>
+
+        <div className="section-transition transition-dark-light" aria-hidden="true"/>
 
         <section className="section services" id="services">
           <div className="container">
-            <div className="section-heading" data-reveal>
-              <div>
-                <span className="section-kicker">Что мы делаем</span>
-                <h2>Все IT-задачи —<br />в одной команде</h2>
-              </div>
-              <p>Не нужно искать разных подрядчиков. Мы проектируем, разрабатываем, интегрируем и поддерживаем цифровые решения целиком.</p>
-            </div>
-
-            <div className="services-grid">
+            <div className="section-heading" data-reveal><div><span className="section-kicker">Направления</span><h2>Не набор услуг.<br/>Единая инженерная команда.</h2></div><p>Выберите направление или просто опишите задачу. Мы сами соберём нужную комбинацию технологий и специалистов.</p></div>
+            <div className="service-bento">
               {services.map((service, index) => (
-                <article className="service-card" data-reveal key={service.title} style={{ '--delay': `${index * 55}ms` }}>
-                  <div className="service-top">
-                    <span className="service-number">{service.number}</span>
-                    <span className="service-icon"><Icon name={service.icon} size={28} /></span>
-                  </div>
-                  <h3>{service.title}</h3>
-                  <p>{service.text}</p>
-                  <div className="tag-list">{service.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-                  <a href="#contact" aria-label={`Обсудить услугу: ${service.title}`}>Обсудить <Icon name="arrow" size={17} /></a>
+                <article className={`service-card ${service.className}`} key={service.id} data-reveal style={{ '--delay': `${index * 55}ms` }}>
+                  <div className="service-visual"><span className="service-glyph"><ServiceGlyph type={service.icon}/></span><span className="service-code">0{index + 1}</span></div>
+                  <div className="service-content"><span className="service-eyebrow">{service.eyebrow}</span><h3>{service.title}</h3><p>{service.text}</p><div className="service-tags">{service.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><button type="button" onClick={() => chooseService(service.title)}>Обсудить направление <UIIcon name="arrow" size={17}/></button></div>
                 </article>
               ))}
             </div>
           </div>
         </section>
 
-        <div className="ticker" aria-hidden="true">
-          <div className="ticker-track">
-            {['WEB DEVELOPMENT', 'MOBILE APPS', 'AI AUTOMATION', 'GAME DEVELOPMENT', 'SYSTEM INTEGRATION', 'CLOUD & DEVOPS', 'WEB DEVELOPMENT', 'MOBILE APPS', 'AI AUTOMATION', 'GAME DEVELOPMENT', 'SYSTEM INTEGRATION', 'CLOUD & DEVOPS'].map((item, index) => (
-              <span key={`${item}-${index}`}>{item}<i>✦</i></span>
-            ))}
+        <section className="routes" id="routes">
+          <div className="container routes-inner">
+            <div className="routes-heading" data-reveal><span className="section-kicker">С чего начать</span><h2>Не знаете, какая услуга нужна?</h2><p>Выберите ситуацию, которая ближе к вашей. Мы уточним детали и предложим понятный следующий шаг.</p></div>
+            <div className="route-list">
+              {routes.map((route, index) => <button type="button" className="route-card" onClick={() => chooseService(route.service)} key={route.number} data-reveal style={{ '--delay': `${index * 70}ms` }}><span>{route.number}</span><div><h3>{route.title}</h3><p>{route.text}</p></div><i><UIIcon name="arrow" size={20}/></i></button>)}
+            </div>
           </div>
-        </div>
+        </section>
 
-        <section className="section solutions" id="solutions">
+        <div className="section-transition transition-light-dark" aria-hidden="true"/>
+
+        <section className="process" id="process">
+          <div className="process-mesh" aria-hidden="true"/>
           <div className="container">
-            <div className="section-heading compact" data-reveal>
-              <div>
-                <span className="section-kicker">Цифровые решения</span>
-                <h2>Создаём не просто код.<br />Создаём результат.</h2>
-              </div>
-            </div>
-
-            <div className="project-grid">
-              {projects.map((project, index) => (
-                <article className={`project-card accent-${project.accent}`} data-reveal key={project.title} style={{ '--delay': `${index * 80}ms` }}>
-                  <div className={`project-visual visual-${project.visual}`}>
-                    {project.visual === 'dashboard' && (
-                      <div className="mock-dashboard">
-                        <div className="mock-sidebar"><i/><i/><i/><i/></div>
-                        <div className="mock-content">
-                          <div className="mock-head"><span/><span/></div>
-                          <div className="mock-chart"><i/><i/><i/><i/><i/><i/></div>
-                          <div className="mock-cards"><span/><span/><span/></div>
-                        </div>
-                      </div>
-                    )}
-                    {project.visual === 'flow' && (
-                      <div className="flow-map">
-                        <span className="flow-node f1">Lead</span><i className="line l1"/>
-                        <span className="flow-node f2">CRM</span><i className="line l2"/>
-                        <span className="flow-node f3">Bot</span><i className="line l3"/>
-                        <span className="flow-node f4">Report</span>
-                        <b className="flow-pulse p1"/><b className="flow-pulse p2"/><b className="flow-pulse p3"/>
-                      </div>
-                    )}
-                    {project.visual === 'mobile' && (
-                      <div className="phone-mockup">
-                        <div className="phone-screen"><span className="phone-island"/><div className="phone-title"/><div className="phone-hero"/><div className="phone-lines"><i/><i/><i/></div></div>
-                        <div className="app-bubble b1">UI</div><div className="app-bubble b2">API</div><div className="app-bubble b3">UX</div>
-                      </div>
-                    )}
-                  </div>
-                  <div className="project-copy">
-                    <span>{project.type}</span>
-                    <h3>{project.title}</h3>
-                    <p>{project.text}</p>
-                    <a href="#contact">Создать решение <Icon name="arrow" size={17} /></a>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="section process" id="process">
-          <div className="process-grid-bg" aria-hidden="true" />
-          <div className="container">
-            <div className="section-heading light" data-reveal>
-              <div>
-                <span className="section-kicker">Как мы работаем</span>
-                <h2>Понятный путь<br />от задачи до запуска</h2>
-              </div>
-              <p>Без хаоса и бесконечных обещаний. Вы всегда понимаете, что происходит, что уже готово и какой шаг следующий.</p>
-            </div>
-            <div className="process-list">
-              {process.map(([number, title, text], index) => (
-                <article data-reveal key={number} style={{ '--delay': `${index * 70}ms` }}>
-                  <span className="process-number">{number}</span>
-                  <div className="process-icon"><span>{index + 1}</span></div>
-                  <h3>{title}</h3>
-                  <p>{text}</p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="section reasons">
-          <div className="container reasons-grid">
-            <div className="reasons-copy" data-reveal>
-              <span className="section-kicker">Почему IT Tech</span>
-              <h2>Сложные технологии.<br />Простое сотрудничество.</h2>
-              <p>Мы говорим на языке бизнеса, предлагаем практичные решения и берём ответственность за весь технический результат.</p>
-              <a className="button button-dark" href="#contact">Расскажите о задаче <Icon name="arrow" size={18} /></a>
-            </div>
-            <div className="reason-cards">
-              {[
-                ['01', 'Одна команда', 'Дизайн, разработка, серверы, интеграции и запуск — без разрыва между подрядчиками.'],
-                ['02', 'Прозрачность', 'Понятный план, регулярные демонстрации и доступ к текущему прогрессу проекта.'],
-                ['03', 'Масштабируемость', 'Закладываем архитектуру, которую можно развивать вместе с вашим бизнесом.'],
-                ['04', 'Фокус на результате', 'Технология должна экономить время, увеличивать продажи или улучшать сервис.'],
-              ].map(([number, title, text], index) => (
-                <article data-reveal key={number} style={{ '--delay': `${index * 60}ms` }}>
-                  <span>{number}</span><h3>{title}</h3><p>{text}</p>
-                </article>
-              ))}
-            </div>
+            <div className="section-heading section-heading-dark" data-reveal><div><span className="section-kicker">Как проходит работа</span><h2>В каждом этапе<br/>понятно, что происходит.</h2></div><p>Мы убираем технический хаос: фиксируем решения, показываем прогресс и заранее объясняем следующий шаг.</p></div>
+            <div className="process-grid">{process.map(([number, title, text], index) => <article key={number} data-reveal style={{ '--delay': `${index * 70}ms` }}><div className="process-top"><span>{number}</span><i>{index + 1}</i></div><h3>{title}</h3><p>{text}</p></article>)}</div>
           </div>
         </section>
 
         <section className="contact" id="contact">
-          <div className="contact-grid" aria-hidden="true" />
-          <div className="container contact-inner">
+          <div className="container contact-layout">
             <div className="contact-copy" data-reveal>
-              <span className="section-kicker">Начнём?</span>
-              <h2>Расскажите,<br />что нужно создать</h2>
-              <p>Опишите задачу своими словами. Мы поможем превратить идею в понятный план цифрового решения.</p>
-              <div className="contact-note">
-                <span className="status-dot" /> Принимаем новые проекты
-              </div>
+              <div className="telegram-badge"><UIIcon name="telegram" size={19}/> Заявка сразу поступит в Telegram</div>
+              <h2>Расскажите,<br/>что нужно создать.</h2><p>Не обязательно писать техническое задание. Достаточно описать проблему, идею или желаемый результат своими словами.</p>
+              <div className="contact-steps"><div><span>1</span><p>Вы отправляете заявку</p></div><div><span>2</span><p>Telegram-бот уведомляет команду</p></div><div><span>3</span><p>Мы связываемся и уточняем детали</p></div></div>
             </div>
+
             <form className="contact-form" onSubmit={handleSubmit} data-reveal>
-              <label>
-                <span>Ваше имя</span>
-                <input type="text" value={formState.name} onChange={(event) => setFormState({ ...formState, name: event.target.value })} placeholder="Как к вам обращаться?" />
-              </label>
-              <label>
-                <span>Телефон, email или Telegram *</span>
-                <input type="text" value={formState.contact} onChange={(event) => setFormState({ ...formState, contact: event.target.value })} placeholder="Удобный способ связи" required />
-              </label>
-              <label>
-                <span>Что нужно сделать? *</span>
-                <textarea rows="4" value={formState.task} onChange={(event) => setFormState({ ...formState, task: event.target.value })} placeholder="Например: нужен сайт, приложение или автоматизация отдела продаж" required />
-              </label>
-              <button className="button button-primary form-submit" type="submit">Сформировать заявку <Icon name="copy" size={18} /></button>
-              {formMessage && <p className="form-message" role="status">{formMessage}</p>}
-              <small>Сейчас форма копирует заявку. Для автоматической отправки подключите Telegram-бота, email или CRM.</small>
+              <div className="form-head"><div><span className="live-dot"/><strong>Новая заявка</strong></div><small>Ответим после получения</small></div>
+              <label><span>Ваше имя</span><input type="text" value={formState.name} onChange={(event) => setFormState({ ...formState, name: event.target.value })} placeholder="Например, Нурсултан" maxLength="120"/></label>
+              <label><span>Телефон, email или Telegram *</span><input type="text" value={formState.contact} onChange={(event) => setFormState({ ...formState, contact: event.target.value })} placeholder="Как с вами связаться?" minLength="3" maxLength="160" required/></label>
+              <label><span>Что нужно сделать? *</span><textarea value={formState.task} onChange={(event) => setFormState({ ...formState, task: event.target.value })} placeholder="Опишите задачу, проблему или идею" minLength="10" maxLength="3000" required/></label>
+              <input className="form-honeypot" type="text" name="website" value={formState.website} onChange={(event) => setFormState({ ...formState, website: event.target.value })} tabIndex="-1" autoComplete="off" aria-hidden="true"/>
+              <button className="button button-primary form-submit" type="submit" disabled={submitState.status === 'loading'}>{submitState.status === 'loading' ? 'Отправляем…' : 'Отправить в Telegram'}<UIIcon name="send" size={18}/></button>
+              {submitState.message && <p className={`form-status is-${submitState.status}`} role="status">{submitState.message}</p>}
+              <small className="form-note">Данные используются только для связи по вашей заявке.</small>
             </form>
           </div>
         </section>
       </main>
 
-      <footer className="footer">
-        <div className="container footer-top">
-          <Logo />
-          <p>Разработка, автоматизация и интеграция цифровых решений.</p>
-          <a href="#top">Наверх ↑</a>
-        </div>
-        <div className="container footer-bottom">
-          <span>© {new Date().getFullYear()} IT Tech</span>
-          <span>Создаём технологии для роста</span>
-        </div>
-      </footer>
+      <footer className="footer"><div className="container footer-main"><Logo/><p>Сайты, приложения, автоматизация, интеграции, игры и инфраструктура.</p><a href="#top">Наверх ↑</a></div><div className="container footer-bottom"><span>© {new Date().getFullYear()} IT Tech</span><span>Digital systems, built clearly.</span></div></footer>
     </div>
   )
 }
